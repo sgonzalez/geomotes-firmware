@@ -1,4 +1,4 @@
-#define MOTE_ID 2
+#define MOTE_ID 3 // 1,2,3,etc.
 
 #include <Time.h>
 #include <ADC_7714.h>
@@ -14,7 +14,7 @@
 ADC_7714 adc(ADC_PIN);
 SPISRAM sram(SRAM_PIN);
 
-//semaphore to lock/unlick SPI bus
+//semaphore to lock/unlock SPI bus
 bool SPI_LOCK = false;
 
 //pointers for SRAM
@@ -157,7 +157,9 @@ void serialEvent() {
           case 5: frequency = F500; break;
         }
         //Serial.println(frequency, DEC);
-        adc.setFrequency(frequency_index);      
+        SPI_LOCK = true;
+        adc.setFrequency(frequency);//_index);
+        SPI_LOCK = false;
       }
       else if(c == 'G'){ // set ADC gain
         delay(10); // wait a bit for byte
@@ -182,7 +184,9 @@ void serialEvent() {
           case 8: gain = GAIN_128; break;
         }
         //Serial.println(gain, HEX);
+        SPI_LOCK = true;
         adc.setGain(gain);
+        SPI_LOCK = false;
       }
       else if(c == 'P'){ // set ADC precision
         delay(10); // wait a bit for byte
